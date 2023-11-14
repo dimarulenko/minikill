@@ -1,0 +1,22 @@
+{
+	"FileVersion": 3,
+	"EngineAssociation": "{FC7CEC49-4A17-3690-D0F2-E4AE490120B3}",
+	"Category": "",
+	"Description": "",
+	"Modules": [
+		{
+			"Name": "Minikill",
+			"Type": "Runtime",
+			"LoadingPhase": "Default"
+		}
+	],
+	"Plugins": [
+		{
+			"Name": "ModelingToolsEditorMode",
+			"Enabled": true,
+			"TargetAllowList": [
+				"Editor"
+			]
+		}
+	]
+}
