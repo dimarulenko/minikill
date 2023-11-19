@@ -11,6 +11,7 @@
 #include "InputActionValue.h"
 #include "Engine/LocalPlayer.h"
 #include "MActionComponent.h"
+#include "MAttributeComponent.h"
 
 DEFINE_LOG_CATEGORY(LogTemplateCharacter);
 
@@ -40,8 +41,8 @@ AMinikillCharacter::AMinikillCharacter()
 	//Mesh1P->SetRelativeRotation(FRotator(0.9f, -19.19f, 5.2f));
 	Mesh1P->SetRelativeLocation(FVector(-30.f, 0.f, -150.f));
 
-	ActionComponent = CreateDefaultSubobject<UMActionComponent>(TEXT("ActionComponent"));
-
+	ActionComponent = CreateDefaultSubobject<UMActionComponent>(TEXT("Action Component"));
+	AttributeComponent = CreateDefaultSubobject<UMAttributeComponent>(TEXT("Attribute Component"));
 }
 
 void AMinikillCharacter::BeginPlay()
