@@ -12,6 +12,7 @@
 #include "Engine/LocalPlayer.h"
 #include "MActionComponent.h"
 #include "MAttributeComponent.h"
+#include "Revolver.h"	//TEMPORARY until inventory is done
 
 DEFINE_LOG_CATEGORY(LogTemplateCharacter);
 
@@ -72,6 +73,9 @@ void AMinikillCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputC
 		EnhancedInputComponent->BindAction(JumpAction, ETriggerEvent::Started, this, &ACharacter::Jump);
 		EnhancedInputComponent->BindAction(JumpAction, ETriggerEvent::Completed, this, &ACharacter::StopJumping);
 
+		// Shooting
+		EnhancedInputComponent->BindAction(FireAction, ETriggerEvent::Started, this, &AMinikillCharacter::Fire);
+
 		// Moving
 		EnhancedInputComponent->BindAction(MoveAction, ETriggerEvent::Triggered, this, &AMinikillCharacter::Move);
 
@@ -95,6 +99,21 @@ void AMinikillCharacter::Move(const FInputActionValue& Value)
 		// add movement 
 		AddMovementInput(GetActorForwardVector(), MovementVector.Y);
 		AddMovementInput(GetActorRightVector(), MovementVector.X);
+	}
+}
+
+void AMinikillCharacter::Fire()
+{
+	// TEMPORARY solution
+	TArray<AActor*> children;
+	GetAttachedActors(children, true);
+	for (AActor* child : children)
+	{
+		if (child->IsA(ARevolver::StaticClass()))
+		{
+			UE_LOG(LogTemp, Warning, TEXT("%s"), child->GetFName());
+			Cast<ARevolver>(child)->Fire();
+		}
 	}
 }
 
