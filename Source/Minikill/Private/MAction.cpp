@@ -28,7 +28,9 @@ bool UMAction::CanStart_Implementation(AActor* instigator)
 
 
 void UMAction::StartAction_Implementation(AActor* instigator) {
-	UE_LOGFMT(LogTemp, Log, "Started: {}", GetName());
+
+	// For some reason this log crashes the game
+	//UE_LOGFMT(LogTemp, Log, "Started: {}", GetName());
 	UMActionComponent* comp = GetOwningComponent();
 	ensureAlways(comp);
 	comp->ActiveGameplayTags.AppendTags(GrantsTags);
@@ -38,7 +40,8 @@ void UMAction::StartAction_Implementation(AActor* instigator) {
 
 void UMAction::StopAction_Implementation(AActor* instigator)
 {
-	UE_LOGFMT(LogTemp, Log, "Started: {}", GetName());
+	// For some reason this log crashes the game
+	//UE_LOGFMT(LogTemp, Log, "Started: {}", GetName());
 	UMActionComponent* comp = GetOwningComponent();
 	ensureAlways(comp);
 	comp->ActiveGameplayTags.RemoveTags(GrantsTags);
