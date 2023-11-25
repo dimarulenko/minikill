@@ -7,7 +7,7 @@
 // Sets default values
 ARevolver::ARevolver()
 {
- 	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
+	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
 	ActionComponent = CreateDefaultSubobject<UMActionComponent>(TEXT("Action Component"));
@@ -20,11 +20,12 @@ void ARevolver::BeginPlay()
 	Super::BeginPlay();
 }
 
+static FGameplayTag fireTag = UGameplayTagsManager::Get().RequestGameplayTag("Actions.Fire");
+static FGameplayTag ammoTag = UGameplayTagsManager::Get().RequestGameplayTag("Attribute.Ammo");
+
 void ARevolver::Fire()
 {
-	FGameplayTag fireTag = UGameplayTagsManager::Get().RequestGameplayTag("Actions.Fire");
-	FGameplayTag ammoTag = UGameplayTagsManager::Get().RequestGameplayTag("Attribute.Ammo"); 
-	float ammo = AttributeComponent->GetAttribute(ammoTag); 
+	float ammo = AttributeComponent->GetAttribute(ammoTag);
 	UE_LOG(LogTemp, Warning, TEXT("%f"), ammo);
 	if (AttributeComponent->GetAttribute(ammoTag) > 0 && ActionComponent->StartAction(this, fireTag))
 	{
@@ -39,15 +40,13 @@ void ARevolver::Fire()
 void ARevolver::ReadyToFire()
 {
 	// Ready to fire again
-	FGameplayTag tag = UGameplayTagsManager::Get().RequestGameplayTag("Actions.Fire");
-	ActionComponent->StopAction(this, tag);
+	ActionComponent->StopAction(this, fireTag);
 }
 
 
 // Called every frame
 void ARevolver::Tick(float DeltaTime)
 {
-	//GEngine->AddOnScreenDebugMessage(-1, 2.0f, FColor::Red, ActionComponent->ActiveGameplayTags.ToString());
 	Super::Tick(DeltaTime);
 }
 
