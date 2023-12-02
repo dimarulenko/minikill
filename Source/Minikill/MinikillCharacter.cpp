@@ -79,6 +79,10 @@ void AMinikillCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputC
 		// Moving
 		EnhancedInputComponent->BindAction(MoveAction, ETriggerEvent::Triggered, this, &AMinikillCharacter::Move);
 
+		// Crouching
+		EnhancedInputComponent->BindAction(CrouchAction, ETriggerEvent::Started, this, &AMinikillCharacter::StartCrouch);
+		EnhancedInputComponent->BindAction(CrouchAction, ETriggerEvent::Completed, this, &AMinikillCharacter::EndCrouch);
+
 		// Looking
 		EnhancedInputComponent->BindAction(LookAction, ETriggerEvent::Triggered, this, &AMinikillCharacter::Look);
 	}
@@ -100,6 +104,16 @@ void AMinikillCharacter::Move(const FInputActionValue& Value)
 		AddMovementInput(GetActorForwardVector(), MovementVector.Y);
 		AddMovementInput(GetActorRightVector(), MovementVector.X);
 	}
+}
+
+void AMinikillCharacter::StartCrouch()
+{
+	Crouch();
+}
+
+void AMinikillCharacter::EndCrouch()
+{
+	UnCrouch();
 }
 
 void AMinikillCharacter::Fire()
