@@ -48,6 +48,12 @@ class AMinikillCharacter : public ACharacter
 	/** Move Input Action */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category=Input, meta=(AllowPrivateAccess = "true"))
 	UInputAction* MoveAction;
+
+	/** Move Speed Settings */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Character Movement: Walking", meta = (AllowPrivateAccess = "true"))
+	float WalkSpeed;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Character Movement: Walking", meta = (AllowPrivateAccess = "true"))
+	float SprintSpeed;
 	
 public:
 	AMinikillCharacter();
@@ -96,8 +102,14 @@ protected:
 	void StartCrouch();
 	void EndCrouch();
 
+	/** Called for dash/sprint input */
+	void StartDash();
+	void EndSprint();
+
 	/** Called for fire input */
 	void Fire();
+
+	FVector2D LastMoveInput;
 
 protected:
 	// APawn interface
@@ -109,6 +121,5 @@ public:
 	USkeletalMeshComponent* GetMesh1P() const { return Mesh1P; }
 	/** Returns FirstPersonCameraComponent subobject **/
 	UCameraComponent* GetFirstPersonCameraComponent() const { return FirstPersonCameraComponent; }
-
 };
 

@@ -10,8 +10,10 @@
 #include "EnhancedInputSubsystems.h"
 #include "InputActionValue.h"
 #include "Engine/LocalPlayer.h"
+#include "GameFramework/CharacterMovementComponent.h"
 #include "MActionComponent.h"
 #include "MAttributeComponent.h"
+#include "GameplayTagsModule.h"
 #include "Revolver.h"	//TEMPORARY until inventory is done
 
 DEFINE_LOG_CATEGORY(LogTemplateCharacter);
@@ -60,6 +62,7 @@ void AMinikillCharacter::BeginPlay()
 		}
 	}
 
+	
 }
 
 //////////////////////////////////////////////////////////////////////////// Input
@@ -79,6 +82,10 @@ void AMinikillCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputC
 		// Moving
 		EnhancedInputComponent->BindAction(MoveAction, ETriggerEvent::Triggered, this, &AMinikillCharacter::Move);
 
+		// Sprinting/Dashing
+		EnhancedInputComponent->BindAction(DashAction, ETriggerEvent::Started, this, &AMinikillCharacter::StartDash);
+		EnhancedInputComponent->BindAction(DashAction, ETriggerEvent::Completed, this, &AMinikillCharacter::EndSprint);
+
 		// Crouching
 		EnhancedInputComponent->BindAction(CrouchAction, ETriggerEvent::Started, this, &AMinikillCharacter::StartCrouch);
 		EnhancedInputComponent->BindAction(CrouchAction, ETriggerEvent::Completed, this, &AMinikillCharacter::EndCrouch);
@@ -93,10 +100,21 @@ void AMinikillCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputC
 }
 
 
+static FGameplayTag crouchTag = UGameplayTagsManager::Get().RequestGameplayTag("Actions.Crouch");
+static FGameplayTag dashTag = UGameplayTagsManager::Get().RequestGameplayTag("Actions.Dash");
+static FGameplayTag sprintTag = UGameplayTagsManager::Get().RequestGameplayTag("Actions.Sprint");
+
+
 void AMinikillCharacter::Move(const FInputActionValue& Value)
 {
 	// input is a Vector2D
 	FVector2D MovementVector = Value.Get<FVector2D>();
+	LastMoveInput = MovementVector;
+
+	if (MovementVector.Y < 0.5f)
+	{
+		EndSprint();
+	}
 
 	if (Controller != nullptr)
 	{
@@ -106,14 +124,48 @@ void AMinikillCharacter::Move(const FInputActionValue& Value)
 	}
 }
 
+void AMinikillCharacter::StartDash()
+{
+	if (LastMoveInput.Y > 0.5f)
+	{
+		// Sprint
+		if (ActionComponent->StartAction(this, sprintTag))
+		{
+			GetCharacterMovement()->MaxWalkSpeed = SprintSpeed;
+		}
+	}
+	else if (LastMoveInput.Y > -0.5f)
+	{
+		// Dash strafe
+		if (ActionComponent->StartAction(this, dashTag))
+		{
+			LaunchCharacter(1000.0f * FVector(LastMoveInput, 0.0f), false, false);
+		}
+	}
+}
+
+void AMinikillCharacter::EndSprint()
+{
+	if (ActionComponent->StopAction(this, sprintTag))
+	{
+		GetCharacterMovement()->MaxWalkSpeed = WalkSpeed;
+	}
+}
+
 void AMinikillCharacter::StartCrouch()
 {
-	Crouch();
+	if (ActionComponent->StartAction(this, crouchTag))
+	{
+		Crouch();
+	}
 }
 
 void AMinikillCharacter::EndCrouch()
 {
-	UnCrouch();
+	if (ActionComponent->StopAction(this, crouchTag))
+	{
+		UnCrouch();
+	}
 }
 
 void AMinikillCharacter::Fire()
@@ -125,7 +177,6 @@ void AMinikillCharacter::Fire()
 	{
 		if (child->IsA(ARevolver::StaticClass()))
 		{
-			UE_LOG(LogTemp, Warning, TEXT("%s"), child->GetFName());
 			Cast<ARevolver>(child)->Fire();
 		}
 	}
