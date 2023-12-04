@@ -14,7 +14,7 @@
 #include "MActionComponent.h"
 #include "MAttributeComponent.h"
 #include "GameplayTagsModule.h"
-#include "Revolver.h"	//TEMPORARY until inventory is done
+#include "Revolver.h"
 
 DEFINE_LOG_CATEGORY(LogTemplateCharacter);
 
@@ -62,6 +62,13 @@ void AMinikillCharacter::BeginPlay()
 		}
 	}
 
+	// Spawn Revolver
+	const FTransform handSocket = Mesh1P->GetSocketTransform(TEXT("Hand_rSocket"));
+	AActor* gun = GetWorld()->SpawnActor(RevolverBP, &handSocket);
+	gun->AttachToComponent(Mesh1P, FAttachmentTransformRules::SnapToTargetNotIncludingScale, TEXT("Hand_rSocket"));
+	gun->SetActorRelativeLocation(FVector(4.044628f, -17.122265f, 4.706299f));
+	gun->SetActorRelativeRotation(FRotator(74.198952f, 118.376793f, -71.397888f));
+	Revolver = Cast<ARevolver>(gun);
 	
 }
 
@@ -109,12 +116,6 @@ void AMinikillCharacter::Move(const FInputActionValue& Value)
 {
 	// input is a Vector2D
 	FVector2D MovementVector = Value.Get<FVector2D>();
-	LastMoveInput = MovementVector;
-
-	if (MovementVector.Y < 0.5f)
-	{
-		EndSprint();
-	}
 
 	if (Controller != nullptr)
 	{
@@ -126,60 +127,29 @@ void AMinikillCharacter::Move(const FInputActionValue& Value)
 
 void AMinikillCharacter::StartDash()
 {
-	if (LastMoveInput.Y > 0.5f)
-	{
-		// Sprint
-		if (ActionComponent->StartAction(this, sprintTag))
-		{
-			GetCharacterMovement()->MaxWalkSpeed = SprintSpeed;
-		}
-	}
-	else if (LastMoveInput.Y > -0.5f)
-	{
-		// Dash strafe
-		if (ActionComponent->StartAction(this, dashTag))
-		{
-			LaunchCharacter(1000.0f * FVector(LastMoveInput, 0.0f), false, false);
-		}
-	}
+	ActionComponent->StartAction(this, dashTag);
+	ActionComponent->StartAction(this, sprintTag);
 }
 
 void AMinikillCharacter::EndSprint()
 {
-	if (ActionComponent->StopAction(this, sprintTag))
-	{
-		GetCharacterMovement()->MaxWalkSpeed = WalkSpeed;
-	}
+	ActionComponent->StopAction(this, sprintTag);
 }
 
 void AMinikillCharacter::StartCrouch()
 {
-	if (ActionComponent->StartAction(this, crouchTag))
-	{
-		Crouch();
-	}
+	ActionComponent->StartAction(this, crouchTag);
 }
 
 void AMinikillCharacter::EndCrouch()
 {
-	if (ActionComponent->StopAction(this, crouchTag))
-	{
-		UnCrouch();
-	}
+	ActionComponent->StopAction(this, crouchTag);
 }
 
 void AMinikillCharacter::Fire()
 {
-	// TEMPORARY solution
-	TArray<AActor*> children;
-	GetAttachedActors(children, true);
-	for (AActor* child : children)
-	{
-		if (child->IsA(ARevolver::StaticClass()))
-		{
-			Cast<ARevolver>(child)->Fire();
-		}
-	}
+	if (Revolver == nullptr) return;
+	Revolver->Fire();
 }
 
 void AMinikillCharacter::Look(const FInputActionValue& Value)

@@ -26,7 +26,6 @@ static FGameplayTag ammoTag = UGameplayTagsManager::Get().RequestGameplayTag("At
 void ARevolver::Fire()
 {
 	float ammo = AttributeComponent->GetAttribute(ammoTag);
-	UE_LOG(LogTemp, Warning, TEXT("%f"), ammo);
 	if (AttributeComponent->GetAttribute(ammoTag) > 0 && ActionComponent->StartAction(this, fireTag))
 	{
 		// Fire Weapon

@@ -7,6 +7,7 @@
 #include "Logging/LogMacros.h"
 #include "MinikillCharacter.generated.h"
 
+class ARevolver;
 class UInputComponent;
 class USkeletalMeshComponent;
 class UCameraComponent;
@@ -29,6 +30,10 @@ class AMinikillCharacter : public ACharacter
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
 	UCameraComponent* FirstPersonCameraComponent;
 
+	/** Revolver */
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Weapon", meta = (AllowPrivateAccess = "true"))
+	TSubclassOf<ARevolver> RevolverBP;
+
 	/** MappingContext */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category=Input, meta=(AllowPrivateAccess = "true"))
 	UInputMappingContext* DefaultMappingContext;
@@ -48,12 +53,6 @@ class AMinikillCharacter : public ACharacter
 	/** Move Input Action */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category=Input, meta=(AllowPrivateAccess = "true"))
 	UInputAction* MoveAction;
-
-	/** Move Speed Settings */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Character Movement: Walking", meta = (AllowPrivateAccess = "true"))
-	float WalkSpeed;
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Character Movement: Walking", meta = (AllowPrivateAccess = "true"))
-	float SprintSpeed;
 	
 public:
 	AMinikillCharacter();
@@ -68,9 +67,6 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Attributes", meta = (AllowPrivateAccess = "true"))
 	class UMAttributeComponent* AttributeComponent;
-
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Weapon", meta = (AllowPrivateAccess = "true"))
-	AActor *Revolver;	//TEMPORARY, untill inventory is done
 
 	/** Look Input Action */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
@@ -109,7 +105,7 @@ protected:
 	/** Called for fire input */
 	void Fire();
 
-	FVector2D LastMoveInput;
+	ARevolver* Revolver;
 
 protected:
 	// APawn interface
