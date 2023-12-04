@@ -87,6 +87,10 @@ public:
 	UFUNCTION(BlueprintCallable, Category = Weapon)
 	bool GetHasRifle();
 
+	/** Returns FirstPersonCameraComponent subobject **/
+	UFUNCTION(BlueprintCallable, Category = Weapon)
+	ARevolver* GetRevolver() const { return Revolver; }
+
 protected:
 	/** Called for movement input */
 	void Move(const FInputActionValue& Value);
