@@ -50,6 +50,10 @@ class AMinikillCharacter : public ACharacter
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
 	UInputAction* FireAction;
 
+	/** Reload Input Action */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
+	UInputAction* ReloadAction;
+
 	/** Move Input Action */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category=Input, meta=(AllowPrivateAccess = "true"))
 	UInputAction* MoveAction;
@@ -106,8 +110,9 @@ protected:
 	void StartDash();
 	void EndSprint();
 
-	/** Called for fire input */
+	/** Called for Weapon Inputs */
 	void Fire();
+	void Reload();
 
 	ARevolver* Revolver;
 

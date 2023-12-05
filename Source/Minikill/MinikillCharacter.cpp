@@ -86,6 +86,9 @@ void AMinikillCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputC
 		// Shooting
 		EnhancedInputComponent->BindAction(FireAction, ETriggerEvent::Started, this, &AMinikillCharacter::Fire);
 
+		// Reloading
+		EnhancedInputComponent->BindAction(ReloadAction, ETriggerEvent::Started, this, &AMinikillCharacter::Reload);
+
 		// Moving
 		EnhancedInputComponent->BindAction(MoveAction, ETriggerEvent::Triggered, this, &AMinikillCharacter::Move);
 
@@ -110,6 +113,8 @@ void AMinikillCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputC
 static FGameplayTag crouchTag = UGameplayTagsManager::Get().RequestGameplayTag("Actions.Crouch");
 static FGameplayTag dashTag = UGameplayTagsManager::Get().RequestGameplayTag("Actions.Dash");
 static FGameplayTag sprintTag = UGameplayTagsManager::Get().RequestGameplayTag("Actions.Sprint");
+static FGameplayTag fireTag = UGameplayTagsManager::Get().RequestGameplayTag("Actions.Fire");
+static FGameplayTag reloadTag = UGameplayTagsManager::Get().RequestGameplayTag("Actions.Reload");
 
 
 void AMinikillCharacter::Move(const FInputActionValue& Value)
@@ -149,7 +154,13 @@ void AMinikillCharacter::EndCrouch()
 void AMinikillCharacter::Fire()
 {
 	if (Revolver == nullptr) return;
-	Revolver->Fire();
+	Revolver->ActionComponent->StartAction(Revolver, fireTag);
+}
+
+void AMinikillCharacter::Reload()
+{
+	if (Revolver == nullptr) return;
+	Revolver->ActionComponent->StartAction(Revolver, reloadTag);
 }
 
 void AMinikillCharacter::Look(const FInputActionValue& Value)
