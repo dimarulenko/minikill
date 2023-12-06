@@ -5,6 +5,7 @@
 #include "Components/SphereComponent.h"
 #include "GameFramework/ProjectileMovementComponent.h"
 #include "MAttributeComponent.h"
+#include "GameplayTagsModule.h"
 
 // Sets default values
 AProjectile::AProjectile()
@@ -45,19 +46,23 @@ void AProjectile::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 }
 
+static FGameplayTag healthTag = UGameplayTagsManager::Get().RequestGameplayTag("Attribute.Health");
+
 void AProjectile::OnHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit)
 {
-	UE_LOG(LogClass, Log, TEXT("This a testing statement. %s"), *Hit.BoneName.GetPlainNameString());
 	UMAttributeComponent* hitAttributes = OtherActor->GetComponentByClass<UMAttributeComponent>();
 	if (hitAttributes != nullptr)
 	{
 		if (Hit.BoneName == "Head")
 		{
-			GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, TEXT("HEADSHOT!"));
+			// Headshot
+			hitAttributes->ApplyChange(healthTag, -(2 * DamageValue));
+			//TODO add to alter
 		}
 		else
 		{
-			GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, TEXT("HIT!"));
+			// Bodyshot
+			hitAttributes->ApplyChange(healthTag, -DamageValue);
 		}
 	}
 	Destroy();
