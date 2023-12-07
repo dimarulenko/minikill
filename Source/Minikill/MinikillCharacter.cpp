@@ -10,9 +10,11 @@
 #include "EnhancedInputSubsystems.h"
 #include "InputActionValue.h"
 #include "Engine/LocalPlayer.h"
+#include "GameFramework/CharacterMovementComponent.h"
 #include "MActionComponent.h"
 #include "MAttributeComponent.h"
-#include "Revolver.h"	//TEMPORARY until inventory is done
+#include "GameplayTagsModule.h"
+#include "Revolver.h"
 
 DEFINE_LOG_CATEGORY(LogTemplateCharacter);
 
@@ -60,6 +62,14 @@ void AMinikillCharacter::BeginPlay()
 		}
 	}
 
+	// Spawn Revolver
+	const FTransform handSocket = Mesh1P->GetSocketTransform(TEXT("Hand_rSocket"));
+	AActor* gun = GetWorld()->SpawnActor(RevolverBP, &handSocket);
+	gun->AttachToComponent(Mesh1P, FAttachmentTransformRules::SnapToTargetNotIncludingScale, TEXT("Hand_rSocket"));
+	gun->SetActorRelativeLocation(FVector(4.044628f, -17.122265f, 4.706299f));
+	gun->SetActorRelativeRotation(FRotator(74.198952f, 118.376793f, -71.397888f));
+	Revolver = Cast<ARevolver>(gun);
+	
 }
 
 //////////////////////////////////////////////////////////////////////////// Input
@@ -76,8 +86,19 @@ void AMinikillCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputC
 		// Shooting
 		EnhancedInputComponent->BindAction(FireAction, ETriggerEvent::Started, this, &AMinikillCharacter::Fire);
 
+		// Reloading
+		EnhancedInputComponent->BindAction(ReloadAction, ETriggerEvent::Started, this, &AMinikillCharacter::Reload);
+
 		// Moving
 		EnhancedInputComponent->BindAction(MoveAction, ETriggerEvent::Triggered, this, &AMinikillCharacter::Move);
+
+		// Sprinting/Dashing
+		EnhancedInputComponent->BindAction(DashAction, ETriggerEvent::Started, this, &AMinikillCharacter::StartDash);
+		EnhancedInputComponent->BindAction(DashAction, ETriggerEvent::Completed, this, &AMinikillCharacter::EndSprint);
+
+		// Crouching
+		EnhancedInputComponent->BindAction(CrouchAction, ETriggerEvent::Started, this, &AMinikillCharacter::StartCrouch);
+		EnhancedInputComponent->BindAction(CrouchAction, ETriggerEvent::Completed, this, &AMinikillCharacter::EndCrouch);
 
 		// Looking
 		EnhancedInputComponent->BindAction(LookAction, ETriggerEvent::Triggered, this, &AMinikillCharacter::Look);
@@ -87,6 +108,13 @@ void AMinikillCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputC
 		UE_LOG(LogTemplateCharacter, Error, TEXT("'%s' Failed to find an Enhanced Input Component! This template is built to use the Enhanced Input system. If you intend to use the legacy system, then you will need to update this C++ file."), *GetNameSafe(this));
 	}
 }
+
+
+static FGameplayTag crouchTag = UGameplayTagsManager::Get().RequestGameplayTag("Actions.Crouch");
+static FGameplayTag dashTag = UGameplayTagsManager::Get().RequestGameplayTag("Actions.Dash");
+static FGameplayTag sprintTag = UGameplayTagsManager::Get().RequestGameplayTag("Actions.Sprint");
+static FGameplayTag fireTag = UGameplayTagsManager::Get().RequestGameplayTag("Actions.Fire");
+static FGameplayTag reloadTag = UGameplayTagsManager::Get().RequestGameplayTag("Actions.Reload");
 
 
 void AMinikillCharacter::Move(const FInputActionValue& Value)
@@ -102,19 +130,37 @@ void AMinikillCharacter::Move(const FInputActionValue& Value)
 	}
 }
 
+void AMinikillCharacter::StartDash()
+{
+	ActionComponent->StartAction(this, dashTag);
+	ActionComponent->StartAction(this, sprintTag);
+}
+
+void AMinikillCharacter::EndSprint()
+{
+	ActionComponent->StopAction(this, sprintTag);
+}
+
+void AMinikillCharacter::StartCrouch()
+{
+	ActionComponent->StartAction(this, crouchTag);
+}
+
+void AMinikillCharacter::EndCrouch()
+{
+	ActionComponent->StopAction(this, crouchTag);
+}
+
 void AMinikillCharacter::Fire()
 {
-	// TEMPORARY solution
-	TArray<AActor*> children;
-	GetAttachedActors(children, true);
-	for (AActor* child : children)
-	{
-		if (child->IsA(ARevolver::StaticClass()))
-		{
-			UE_LOG(LogTemp, Warning, TEXT("%s"), child->GetFName());
-			Cast<ARevolver>(child)->Fire();
-		}
-	}
+	if (Revolver == nullptr) return;
+	Revolver->ActionComponent->StartAction(Revolver, fireTag);
+}
+
+void AMinikillCharacter::Reload()
+{
+	if (Revolver == nullptr) return;
+	Revolver->ActionComponent->StartAction(Revolver, reloadTag);
 }
 
 void AMinikillCharacter::Look(const FInputActionValue& Value)

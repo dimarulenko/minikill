@@ -20,29 +20,6 @@ void ARevolver::BeginPlay()
 	Super::BeginPlay();
 }
 
-static FGameplayTag fireTag = UGameplayTagsManager::Get().RequestGameplayTag("Actions.Fire");
-static FGameplayTag ammoTag = UGameplayTagsManager::Get().RequestGameplayTag("Attribute.Ammo");
-
-void ARevolver::Fire()
-{
-	float ammo = AttributeComponent->GetAttribute(ammoTag);
-	UE_LOG(LogTemp, Warning, TEXT("%f"), ammo);
-	if (AttributeComponent->GetAttribute(ammoTag) > 0 && ActionComponent->StartAction(this, fireTag))
-	{
-		// Fire Weapon
-		AttributeComponent->ApplyChange(ammoTag, -1);
-
-		FTimerHandle FuzeTimerHandle;
-		GetWorld()->GetTimerManager().SetTimer(FuzeTimerHandle, this, &ARevolver::ReadyToFire, FireDelay, false);
-	}
-}
-
-void ARevolver::ReadyToFire()
-{
-	// Ready to fire again
-	ActionComponent->StopAction(this, fireTag);
-}
-
 
 // Called every frame
 void ARevolver::Tick(float DeltaTime)

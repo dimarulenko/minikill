@@ -3,19 +3,22 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "GameFramework/Actor.h"
-#include "MActionComponent.h"
-#include "MAttributeComponent.h"
-#include "Revolver.generated.h"
+#include "GameFramework/Character.h"
+#include "Enemy.generated.h"
+
+class USkeletalMeshComponent;
 
 UCLASS()
-class MINIKILL_API ARevolver : public AActor
+class MINIKILL_API AEnemy : public ACharacter
 {
 	GENERATED_BODY()
-	
-public:	
-	// Sets default values for this actor's properties
-	ARevolver();
+
+	UPROPERTY(VisibleDefaultsOnly, Category = Mesh)
+	USkeletalMeshComponent* Mesh1P;
+
+public:
+	// Sets default values for this character's properties
+	AEnemy();
 
 protected:
 	// Called when the game starts or when spawned
@@ -31,5 +34,8 @@ public:
 
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
+
+	// Called to bind functionality to input
+	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
 };
