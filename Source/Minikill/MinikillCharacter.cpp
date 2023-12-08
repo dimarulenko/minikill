@@ -15,6 +15,7 @@
 #include "MAttributeComponent.h"
 #include "GameplayTagsModule.h"
 #include "Revolver.h"
+#include "Sabre.h"
 
 DEFINE_LOG_CATEGORY(LogTemplateCharacter);
 
@@ -23,9 +24,6 @@ DEFINE_LOG_CATEGORY(LogTemplateCharacter);
 
 AMinikillCharacter::AMinikillCharacter()
 {
-	// Character doesnt have a rifle at start
-	bHasRifle = false;
-	
 	// Set size for collision capsule
 	GetCapsuleComponent()->InitCapsuleSize(55.f, 96.0f);
 		
@@ -62,13 +60,22 @@ void AMinikillCharacter::BeginPlay()
 		}
 	}
 
-	// Spawn Revolver
 	const FTransform handSocket = Mesh1P->GetSocketTransform(TEXT("Hand_rSocket"));
-	AActor* gun = GetWorld()->SpawnActor(RevolverBP, &handSocket);
-	gun->AttachToComponent(Mesh1P, FAttachmentTransformRules::SnapToTargetNotIncludingScale, TEXT("Hand_rSocket"));
-	gun->SetActorRelativeLocation(FVector(4.044628f, -17.122265f, 4.706299f));
-	gun->SetActorRelativeRotation(FRotator(74.198952f, 118.376793f, -71.397888f));
-	Revolver = Cast<ARevolver>(gun);
+
+	// Spawn Revolver
+	AActor* revolver = GetWorld()->SpawnActor(RevolverBP, &handSocket);
+	revolver->AttachToComponent(Mesh1P, FAttachmentTransformRules::SnapToTargetNotIncludingScale, TEXT("Hand_rSocket"));
+ 	revolver->SetActorRelativeLocation(FVector(4.044628f, -17.122265f, 4.706299f));
+	revolver->SetActorRelativeRotation(FRotator(74.198952f, 118.376793f, -71.397888f));
+	Revolver = Cast<ARevolver>(revolver);
+
+	// Spawn Sabre
+	AActor* sabre = GetWorld()->SpawnActor(SabreBP, &handSocket);
+	sabre->AttachToComponent(Mesh1P, FAttachmentTransformRules::SnapToTargetNotIncludingScale, TEXT("Hand_rSocket"));
+	sabre->SetActorRelativeLocation(FVector(2.569257f, -9.551620f, 2.646324f));
+	sabre->SetActorRelativeRotation(FRotator(69.409327f, 103.466391f, -80.651431f));
+	sabre->SetActorHiddenInGame(true);
+	Sabre = Cast<ASabre>(sabre);
 	
 }
 
@@ -83,11 +90,17 @@ void AMinikillCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputC
 		EnhancedInputComponent->BindAction(JumpAction, ETriggerEvent::Started, this, &ACharacter::Jump);
 		EnhancedInputComponent->BindAction(JumpAction, ETriggerEvent::Completed, this, &ACharacter::StopJumping);
 
-		// Shooting
-		EnhancedInputComponent->BindAction(FireAction, ETriggerEvent::Started, this, &AMinikillCharacter::Fire);
+		// Shooting / Slashing
+		EnhancedInputComponent->BindAction(PrimaryAction, ETriggerEvent::Started, this, &AMinikillCharacter::Primary);
+
+		// Aiming / Blocking
+		EnhancedInputComponent->BindAction(SecondaryAction, ETriggerEvent::Started, this, &AMinikillCharacter::Secondary);
 
 		// Reloading
 		EnhancedInputComponent->BindAction(ReloadAction, ETriggerEvent::Started, this, &AMinikillCharacter::Reload);
+
+		// SwapWeapons
+		EnhancedInputComponent->BindAction(SwapWeaponsAction, ETriggerEvent::Started, this, &AMinikillCharacter::SwapWeapons);
 
 		// Moving
 		EnhancedInputComponent->BindAction(MoveAction, ETriggerEvent::Triggered, this, &AMinikillCharacter::Move);
@@ -115,6 +128,9 @@ static FGameplayTag dashTag = UGameplayTagsManager::Get().RequestGameplayTag("Ac
 static FGameplayTag sprintTag = UGameplayTagsManager::Get().RequestGameplayTag("Actions.Sprint");
 static FGameplayTag fireTag = UGameplayTagsManager::Get().RequestGameplayTag("Actions.Fire");
 static FGameplayTag reloadTag = UGameplayTagsManager::Get().RequestGameplayTag("Actions.Reload");
+static FGameplayTag slashTag = UGameplayTagsManager::Get().RequestGameplayTag("Actions.Slash");
+static FGameplayTag blockTag = UGameplayTagsManager::Get().RequestGameplayTag("Actions.Block");
+static FGameplayTag swapWeaponsTag = UGameplayTagsManager::Get().RequestGameplayTag("Actions.SwapWeapons");
 
 
 void AMinikillCharacter::Move(const FInputActionValue& Value)
@@ -151,16 +167,46 @@ void AMinikillCharacter::EndCrouch()
 	ActionComponent->StopAction(this, crouchTag);
 }
 
-void AMinikillCharacter::Fire()
+void AMinikillCharacter::Primary()
 {
-	if (Revolver == nullptr) return;
-	Revolver->ActionComponent->StartAction(Revolver, fireTag);
+	switch (EquippedWeapon)
+	{
+	case EEquippedWeapon::Revolver:
+		if (Revolver == nullptr) return;
+		Revolver->ActionComponent->StartAction(Revolver, fireTag);
+		break;
+	case EEquippedWeapon::Sabre:
+		if (Sabre == nullptr) return;
+		Sabre->ActionComponent->StartAction(Sabre, slashTag);
+		break;
+	}
+}
+
+void AMinikillCharacter::Secondary()
+{
+	switch (EquippedWeapon)
+	{
+	case EEquippedWeapon::Revolver:
+		if (Revolver == nullptr) return;
+		// TODO Aim
+		break;
+	case EEquippedWeapon::Sabre:
+		if (Sabre == nullptr) return;
+		Sabre->ActionComponent->StartAction(Sabre, blockTag);
+		break;
+	}
 }
 
 void AMinikillCharacter::Reload()
 {
+	if (EquippedWeapon != EEquippedWeapon::Revolver) return;
 	if (Revolver == nullptr) return;
 	Revolver->ActionComponent->StartAction(Revolver, reloadTag);
+}
+
+void AMinikillCharacter::SwapWeapons()
+{
+	ActionComponent->StartAction(this, swapWeaponsTag);
 }
 
 void AMinikillCharacter::Look(const FInputActionValue& Value)
