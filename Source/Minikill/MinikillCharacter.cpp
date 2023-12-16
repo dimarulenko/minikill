@@ -173,11 +173,11 @@ void AMinikillCharacter::Primary()
 	{
 	case EEquippedWeapon::Revolver:
 		if (Revolver == nullptr) return;
-		Revolver->ActionComponent->StartAction(Revolver, fireTag);
+		Revolver->ActionComponent->StartAction(this, fireTag);
 		break;
 	case EEquippedWeapon::Sabre:
 		if (Sabre == nullptr) return;
-		Sabre->ActionComponent->StartAction(Sabre, slashTag);
+		Sabre->ActionComponent->StartAction(this, slashTag);
 		break;
 	}
 }
@@ -192,7 +192,7 @@ void AMinikillCharacter::Secondary()
 		break;
 	case EEquippedWeapon::Sabre:
 		if (Sabre == nullptr) return;
-		Sabre->ActionComponent->StartAction(Sabre, blockTag);
+		Sabre->ActionComponent->StartAction(this, blockTag);
 		break;
 	}
 }
@@ -201,7 +201,7 @@ void AMinikillCharacter::Reload()
 {
 	if (EquippedWeapon != EEquippedWeapon::Revolver) return;
 	if (Revolver == nullptr) return;
-	Revolver->ActionComponent->StartAction(Revolver, reloadTag);
+	Revolver->ActionComponent->StartAction(this, reloadTag);
 }
 
 void AMinikillCharacter::SwapWeapons()

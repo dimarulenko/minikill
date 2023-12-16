@@ -47,6 +47,7 @@ void AProjectile::Tick(float DeltaTime)
 }
 
 static FGameplayTag healthTag = UGameplayTagsManager::Get().RequestGameplayTag("Attribute.Health");
+static FGameplayTag alterTag = UGameplayTagsManager::Get().RequestGameplayTag("Attribute.AlterKill");
 
 void AProjectile::OnHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit)
 {
@@ -57,7 +58,12 @@ void AProjectile::OnHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, U
 		{
 			// Headshot
 			hitAttributes->ApplyChange(healthTag, -(2 * DamageValue));
-			//TODO add to alter
+			// Add to alter
+			UMAttributeComponent* shooterAttributes = GetInstigator()->GetComponentByClass<UMAttributeComponent>();
+			if (shooterAttributes != nullptr)
+			{
+				shooterAttributes->ApplyChange(alterTag, 1);
+			}
 		}
 		else
 		{
