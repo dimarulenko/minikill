@@ -29,6 +29,9 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Attributes", meta = (AllowPrivateAccess = "true"))
 	class UMAttributeComponent* AttributeComponent;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float DamageMultiplier = 1.0f;
+
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
