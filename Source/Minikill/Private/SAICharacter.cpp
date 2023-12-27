@@ -3,12 +3,18 @@
 
 #include "SAICharacter.h"
 #include "MAttributeComponent.h"
+#include "Revolver.h"
+#include "Perception/PawnSensingComponent.h"
+#include "AIController.h"
+#include "BehaviorTree/BlackboardComponent.h"
 
 // Sets default values
 ASAICharacter::ASAICharacter()
 {
  	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
+
+	PawnSensing = CreateDefaultSubobject<UPawnSensingComponent>("PawnSensing");
 
 	AttributeComponent = CreateDefaultSubobject<UMAttributeComponent>(TEXT("Attribute Component"));
 }
@@ -17,19 +23,31 @@ ASAICharacter::ASAICharacter()
 void ASAICharacter::BeginPlay()
 {
 	Super::BeginPlay();
+
+	const FTransform handSocket = GetMesh()->GetSocketTransform(TEXT("Hand_rSocket"));
+
+	// Spawn Revolver
+	AActor* revolver = GetWorld()->SpawnActor(RevolverBP, &handSocket);
+	revolver->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetNotIncludingScale, TEXT("Hand_rSocket"));
+	revolver->SetActorRelativeLocation(FVector(4.044628f, -17.122265f, 4.706299f));
+	revolver->SetActorRelativeRotation(FRotator(74.198952f, 118.376793f, -71.397888f));
+	Revolver = Cast<ARevolver>(revolver);
 }
 
-// Called every frame
-void ASAICharacter::Tick(float DeltaTime)
+void ASAICharacter::PostInitializeComponents()
 {
-	Super::Tick(DeltaTime);
-
+	Super::PostInitializeComponents();
+	PawnSensing->OnSeePawn.AddDynamic(this, &ASAICharacter::OnPawnSeen);
 }
 
-// Called to bind functionality to input
-void ASAICharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
+void ASAICharacter::OnPawnSeen(APawn* Pawn)
 {
-	Super::SetupPlayerInputComponent(PlayerInputComponent);
-
+	AAIController* AIC = Cast<AAIController>(GetController());
+	if (AIC)
+	{
+		UBlackboardComponent* bbc = AIC->GetBlackboardComponent();
+		bbc->SetValueAsObject("TargetActor", Pawn);
+	}
 }
+
 

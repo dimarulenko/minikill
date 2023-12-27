@@ -6,10 +6,16 @@
 #include "GameFramework/Character.h"
 #include "SAICharacter.generated.h"
 
+class ARevolver;
+class UPawnSensingComponent;
+
 UCLASS()
 class MINIKILL_API ASAICharacter : public ACharacter
 {
 	GENERATED_BODY()
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Weapon", meta = (AllowPrivateAccess = "true"))
+	TSubclassOf<ARevolver> RevolverBP;
 
 public:
 	// Sets default values for this character's properties
@@ -19,15 +25,23 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
+	UPROPERTY(VisibleAnywhere, Category="Components")
+	UPawnSensingComponent* PawnSensing;
+
+	ARevolver* Revolver;
+
+	UFUNCTION()
+	void OnPawnSeen(APawn* Pawn);
+
 public:
+
+	virtual void PostInitializeComponents() override;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Attributes", meta = (AllowPrivateAccess = "true"))
 	class UMAttributeComponent* AttributeComponent;
 
-	// Called every frame
-	virtual void Tick(float DeltaTime) override;
+	UFUNCTION(BlueprintCallable, Category = Weapon)
+	ARevolver* GetRevolver() const { return Revolver; }
 
-	// Called to bind functionality to input
-	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
 };

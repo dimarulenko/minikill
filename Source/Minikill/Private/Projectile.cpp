@@ -51,7 +51,7 @@ static FGameplayTag alterTag = UGameplayTagsManager::Get().RequestGameplayTag("A
 
 void AProjectile::OnHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit)
 {
-	UMAttributeComponent* hitAttributes = OtherActor->GetComponentByClass<UMAttributeComponent>();
+	UMAttributeComponent* hitAttributes = OtherActor->GetComponentByClass<UMAttributeComponent>(); if (GEngine)
 	if (hitAttributes != nullptr)
 	{
 		if (Hit.BoneName == "Head")

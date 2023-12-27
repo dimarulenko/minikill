@@ -12,8 +12,11 @@ UCLASS()
 class MINIKILL_API ARevolver : public AActor
 {
 	GENERATED_BODY()
+
+	UPROPERTY(VisibleDefaultsOnly, Category = Mesh)
+	USkeletalMeshComponent* Mesh;
 	
-public:	
+public:
 	// Sets default values for this actor's properties
 	ARevolver();
 
@@ -28,6 +31,9 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Attributes", meta = (AllowPrivateAccess = "true"))
 	class UMAttributeComponent* AttributeComponent;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Extras, meta = (AllowPrivateAccess = "true"))
+	class UArrowComponent* Muzzle;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	float DamageMultiplier = 1.0f;
