@@ -23,7 +23,7 @@ void USBTService_CheckRange::TickNode(UBehaviorTreeComponent& OwnerComp, uint8* 
 				if (ensure(AIPawn))
 				{
 					float distance = FVector::Distance(target->GetActorLocation(), AIPawn->GetActorLocation());
-					bool withinRange = distance < 2000.f;
+					bool withinRange = distance < blackboard->GetValueAsFloat("Range");
 					bool hasLOS = false;
 					if (withinRange)
 					{

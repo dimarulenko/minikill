@@ -7,6 +7,7 @@
 #include "SAICharacter.generated.h"
 
 class ARevolver;
+class ASabre;
 class UPawnSensingComponent;
 
 UCLASS()
@@ -16,6 +17,12 @@ class MINIKILL_API ASAICharacter : public ACharacter
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Weapon", meta = (AllowPrivateAccess = "true"))
 	TSubclassOf<ARevolver> RevolverBP;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Weapon", meta = (AllowPrivateAccess = "true"))
+	TSubclassOf<ASabre> SabreBP;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "AI", meta = (AllowPrivateAccess = "true"))
+	float Range;
 
 public:
 	// Sets default values for this character's properties
@@ -29,6 +36,7 @@ protected:
 	UPawnSensingComponent* PawnSensing;
 
 	ARevolver* Revolver;
+	ASabre* Sabre;
 
 	UFUNCTION()
 	void OnPawnSeen(APawn* Pawn);
@@ -42,6 +50,8 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = Weapon)
 	ARevolver* GetRevolver() const { return Revolver; }
+	UFUNCTION(BlueprintCallable, Category = Weapon)
+	ASabre* GetSabre() const { return Sabre; }
 
 
 };
