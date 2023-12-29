@@ -45,6 +45,11 @@ float UMAttributeComponent::GetAttribute(FGameplayTag Attribute) const
 	return AttributeMap[Attribute];
 }
 
+float UMAttributeComponent::GetDefaultValue(FGameplayTag Attribute) const
+{
+	return DefaultAttributes[Attribute];
+}
+
 bool UMAttributeComponent::TryGetAttribute(FGameplayTag Attribute, float& OutValue) const
 {
 	if (!AttributeMap.Contains(Attribute)) return false;
