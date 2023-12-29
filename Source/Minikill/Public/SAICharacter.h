@@ -6,10 +6,23 @@
 #include "GameFramework/Character.h"
 #include "SAICharacter.generated.h"
 
+class ARevolver;
+class ASabre;
+class UPawnSensingComponent;
+
 UCLASS()
 class MINIKILL_API ASAICharacter : public ACharacter
 {
 	GENERATED_BODY()
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Weapon", meta = (AllowPrivateAccess = "true"))
+	TSubclassOf<ARevolver> RevolverBP;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Weapon", meta = (AllowPrivateAccess = "true"))
+	TSubclassOf<ASabre> SabreBP;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "AI", meta = (AllowPrivateAccess = "true"))
+	float Range;
 
 public:
 	// Sets default values for this character's properties
@@ -19,15 +32,26 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
+	UPROPERTY(VisibleAnywhere, Category="Components")
+	UPawnSensingComponent* PawnSensing;
+
+	ARevolver* Revolver;
+	ASabre* Sabre;
+
+	UFUNCTION()
+	void OnPawnSeen(APawn* Pawn);
+
 public:
+
+	virtual void PostInitializeComponents() override;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Attributes", meta = (AllowPrivateAccess = "true"))
 	class UMAttributeComponent* AttributeComponent;
 
-	// Called every frame
-	virtual void Tick(float DeltaTime) override;
+	UFUNCTION(BlueprintCallable, Category = Weapon)
+	ARevolver* GetRevolver() const { return Revolver; }
+	UFUNCTION(BlueprintCallable, Category = Weapon)
+	ASabre* GetSabre() const { return Sabre; }
 
-	// Called to bind functionality to input
-	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
 };
