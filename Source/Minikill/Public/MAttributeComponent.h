@@ -32,9 +32,6 @@ public:
 	float GetAttribute(FGameplayTag Attribute) const;
 
 	UFUNCTION(BlueprintCallable, Category = "Attributes")
-	float GetDefaultValue(FGameplayTag Attribute) const;
-
-	UFUNCTION(BlueprintCallable, Category = "Attributes")
 	bool TryGetAttribute(FGameplayTag Attribute, float& OutValue) const;
 	// Sets default values for this component's properties
 	UMAttributeComponent();

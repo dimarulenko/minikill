@@ -11,11 +11,14 @@
 #include "Components/ArrowComponent.h"
 #include "BehaviorTree/BlackboardComponent.h"
 
+
+static FGameplayTag fireTag = UGameplayTagsManager::Get().RequestGameplayTag("Actions.Fire");
+static FGameplayTag slashTag = UGameplayTagsManager::Get().RequestGameplayTag("Actions.Slash");
+
+
 EBTNodeResult::Type USBTTaskRangedAttack::ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory)
 {
 	AAIController* controller = OwnerComp.GetAIOwner();
-	static FGameplayTag fireTag = UGameplayTagsManager::Get().RequestGameplayTag("Actions.Fire");
-	static FGameplayTag slashTag = UGameplayTagsManager::Get().RequestGameplayTag("Actions.Slash");
 	if (ensure(controller))
 	{
 		ASAICharacter* aiCharacter = Cast<ASAICharacter>(controller->GetPawn());
