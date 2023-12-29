@@ -132,9 +132,7 @@ void AMinikillCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputC
 static FGameplayTag crouchTag = UGameplayTagsManager::Get().RequestGameplayTag("Actions.Crouch");
 static FGameplayTag dashTag = UGameplayTagsManager::Get().RequestGameplayTag("Actions.Dash");
 static FGameplayTag sprintTag = UGameplayTagsManager::Get().RequestGameplayTag("Actions.Sprint");
-static FGameplayTag fireTag = UGameplayTagsManager::Get().RequestGameplayTag("Actions.Fire");
 static FGameplayTag reloadTag = UGameplayTagsManager::Get().RequestGameplayTag("Actions.Reload");
-static FGameplayTag slashTag = UGameplayTagsManager::Get().RequestGameplayTag("Actions.Slash");
 static FGameplayTag blockTag = UGameplayTagsManager::Get().RequestGameplayTag("Actions.Block");
 static FGameplayTag swapWeaponsTag = UGameplayTagsManager::Get().RequestGameplayTag("Actions.SwapWeapons");
 
@@ -175,6 +173,8 @@ void AMinikillCharacter::EndCrouch()
 
 void AMinikillCharacter::Primary()
 {
+	static FGameplayTag slashTag = UGameplayTagsManager::Get().RequestGameplayTag("Actions.Slash");
+	static FGameplayTag fireTag = UGameplayTagsManager::Get().RequestGameplayTag("Actions.Fire");
 	switch (EquippedWeapon)
 	{
 	case EEquippedWeapon::Revolver:
