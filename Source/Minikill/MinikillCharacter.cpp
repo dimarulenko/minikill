@@ -27,7 +27,7 @@ AMinikillCharacter::AMinikillCharacter()
 {
 	// Set size for collision capsule
 	GetCapsuleComponent()->InitCapsuleSize(55.f, 96.0f);
-		
+
 	// Create a Spring arm
 	SpringArmComp = CreateDefaultSubobject<USpringArmComponent>(TEXT("SpringArm"));
 	SpringArmComp->SetupAttachment(GetCapsuleComponent());
@@ -71,7 +71,7 @@ void AMinikillCharacter::BeginPlay()
 	// Spawn Revolver
 	AActor* revolver = GetWorld()->SpawnActor(RevolverBP, &handSocket);
 	revolver->AttachToComponent(Mesh1P, FAttachmentTransformRules::SnapToTargetNotIncludingScale, TEXT("Hand_rSocket"));
- 	revolver->SetActorRelativeLocation(FVector(4.044628f, -17.122265f, 4.706299f));
+	revolver->SetActorRelativeLocation(FVector(4.044628f, -17.122265f, 4.706299f));
 	revolver->SetActorRelativeRotation(FRotator(74.198952f, 118.376793f, -71.397888f));
 	Revolver = Cast<ARevolver>(revolver);
 
@@ -82,7 +82,7 @@ void AMinikillCharacter::BeginPlay()
 	sabre->SetActorRelativeRotation(FRotator(69.409327f, 103.466391f, -80.651431f));
 	sabre->SetActorHiddenInGame(true);
 	Sabre = Cast<ASabre>(sabre);
-	
+
 }
 
 //////////////////////////////////////////////////////////////////////////// Input
