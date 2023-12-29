@@ -60,9 +60,20 @@ void ASAICharacter::PostInitializeComponents()
 {
 	Super::PostInitializeComponents();
 	PawnSensing->OnSeePawn.AddDynamic(this, &ASAICharacter::OnPawnSeen);
+	PawnSensing->OnHearNoise.AddDynamic(this, &ASAICharacter::OnPawnHeard);
 }
 
 void ASAICharacter::OnPawnSeen(APawn* Pawn)
+{
+	AAIController* AIC = Cast<AAIController>(GetController());
+	if (AIC)
+	{
+		UBlackboardComponent* bbc = AIC->GetBlackboardComponent();
+		bbc->SetValueAsObject("TargetActor", Pawn);
+	}
+}
+
+void ASAICharacter::OnPawnHeard(APawn* Pawn, const FVector& Location, float Volume)
 {
 	AAIController* AIC = Cast<AAIController>(GetController());
 	if (AIC)

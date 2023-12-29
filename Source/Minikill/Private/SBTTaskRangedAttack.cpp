@@ -37,13 +37,12 @@ EBTNodeResult::Type USBTTaskRangedAttack::ExecuteTask(UBehaviorTreeComponent& Ow
 		ASabre* sabre = aiCharacter->GetSabre();
 		if (sabre != nullptr)
 		{
-			GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, TEXT("attacking!"));
 			sabre->ActionComponent->StartAction(aiCharacter, slashTag);
 			return EBTNodeResult::Succeeded;
 		}
 
 
-		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, TEXT("failed!"));
+		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, TEXT("Attack task failed!"));
 		return EBTNodeResult::Failed;
 	}
 	return EBTNodeResult::Failed;

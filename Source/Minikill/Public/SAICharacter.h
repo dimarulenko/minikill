@@ -40,6 +40,8 @@ protected:
 
 	UFUNCTION()
 	void OnPawnSeen(APawn* Pawn);
+	UFUNCTION()
+	void OnPawnHeard(APawn* Pawn, const FVector& Location, float Volume);
 
 public:
 
