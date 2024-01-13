@@ -58,11 +58,13 @@ void AProjectile::OnHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, U
 		{
 			// Headshot
 			hitAttributes->ApplyChange(healthTag, -(2 * DamageValue));
+			float alter = 0;
 			// Add to alter
 			UMAttributeComponent* shooterAttributes = GetInstigator()->GetComponentByClass<UMAttributeComponent>();
-			if (shooterAttributes != nullptr)
+			if (shooterAttributes != nullptr && shooterAttributes->TryGetAttribute(alterTag, alter))
 			{
-				shooterAttributes->ApplyChange(alterTag, 1);
+				shooterAttributes->ApplyChange(alterTag, 2);
+				shooterAttributes->ApplyChange(healthTag, 15);
 			}
 		}
 		else
