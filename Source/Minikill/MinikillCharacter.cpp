@@ -73,6 +73,7 @@ void AMinikillCharacter::BeginPlay()
 	revolver->AttachToComponent(Mesh1P, FAttachmentTransformRules::SnapToTargetNotIncludingScale, TEXT("Hand_rSocket"));
 	revolver->SetActorRelativeLocation(FVector(4.044628f, -17.122265f, 4.706299f));
 	revolver->SetActorRelativeRotation(FRotator(74.198952f, 118.376793f, -71.397888f));
+	revolver->SetActorHiddenInGame(true);
 	Revolver = Cast<ARevolver>(revolver);
 
 	// Spawn Sabre
@@ -80,7 +81,6 @@ void AMinikillCharacter::BeginPlay()
 	sabre->AttachToComponent(Mesh1P, FAttachmentTransformRules::SnapToTargetNotIncludingScale, TEXT("Hand_rSocket"));
 	sabre->SetActorRelativeLocation(FVector(2.569257f, -9.551620f, 2.646324f));
 	sabre->SetActorRelativeRotation(FRotator(69.409327f, 103.466391f, -80.651431f));
-	sabre->SetActorHiddenInGame(true);
 	Sabre = Cast<ASabre>(sabre);
 
 }

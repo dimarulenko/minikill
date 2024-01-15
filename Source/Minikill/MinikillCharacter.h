@@ -19,8 +19,8 @@ struct FInputActionValue;
 
 UENUM(BlueprintType)
 enum class EEquippedWeapon : uint8 {
-	Revolver	UMETA(DisplayName = "Revolver"),
 	Sabre	UMETA(DisplayName = "Sabre"),
+	Revolver	UMETA(DisplayName = "Revolver"),
 };
 
 DECLARE_LOG_CATEGORY_EXTERN(LogTemplateCharacter, Log, All);
