@@ -35,7 +35,9 @@ protected:
 	UPROPERTY(VisibleAnywhere, Category="Components")
 	UPawnSensingComponent* PawnSensing;
 
+	UPROPERTY(VisibleAnywhere)
 	ARevolver* Revolver;
+	UPROPERTY(VisibleAnywhere)
 	ASabre* Sabre;
 
 	UFUNCTION()
