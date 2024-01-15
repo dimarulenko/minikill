@@ -29,10 +29,16 @@ AProjectile::AProjectile()
 
 }
 
+static FGameplayTag healthTag;
+static FGameplayTag alterTag;
+
 // Called when the game starts or when spawned
 void AProjectile::BeginPlay()
 {
 	Super::BeginPlay();
+
+	healthTag = UGameplayTagsManager::Get().RequestGameplayTag("Attribute.Health");
+	alterTag = UGameplayTagsManager::Get().RequestGameplayTag("Attribute.AlterKill");
 
 	CollisionSphere->OnComponentHit.AddDynamic(this, &AProjectile::OnHit);
 	
@@ -45,9 +51,6 @@ void AProjectile::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 }
-
-static FGameplayTag healthTag = UGameplayTagsManager::Get().RequestGameplayTag("Attribute.Health");
-static FGameplayTag alterTag = UGameplayTagsManager::Get().RequestGameplayTag("Attribute.AlterKill");
 
 void AProjectile::OnHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit)
 {

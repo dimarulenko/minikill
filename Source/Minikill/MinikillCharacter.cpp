@@ -52,10 +52,24 @@ AMinikillCharacter::AMinikillCharacter()
 	AttributeComponent = CreateDefaultSubobject<UMAttributeComponent>(TEXT("Attribute Component"));
 }
 
+static FGameplayTag crouchTag;
+static FGameplayTag dashTag;
+static FGameplayTag sprintTag;
+static FGameplayTag reloadTag;
+static FGameplayTag blockTag;
+static FGameplayTag swapWeaponsTag;
+
 void AMinikillCharacter::BeginPlay()
 {
 	// Call the base class  
 	Super::BeginPlay();
+
+	crouchTag = UGameplayTagsManager::Get().RequestGameplayTag("Actions.Crouch");
+	dashTag = UGameplayTagsManager::Get().RequestGameplayTag("Actions.Dash");
+	sprintTag = UGameplayTagsManager::Get().RequestGameplayTag("Actions.Sprint");
+	reloadTag = UGameplayTagsManager::Get().RequestGameplayTag("Actions.Reload");
+	blockTag = UGameplayTagsManager::Get().RequestGameplayTag("Actions.Block");
+	swapWeaponsTag = UGameplayTagsManager::Get().RequestGameplayTag("Actions.SwapWeapons");
 
 	// Add Input Mapping Context
 	if (APlayerController* PlayerController = Cast<APlayerController>(Controller))
@@ -128,13 +142,6 @@ void AMinikillCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputC
 	}
 }
 
-
-static FGameplayTag crouchTag = UGameplayTagsManager::Get().RequestGameplayTag("Actions.Crouch");
-static FGameplayTag dashTag = UGameplayTagsManager::Get().RequestGameplayTag("Actions.Dash");
-static FGameplayTag sprintTag = UGameplayTagsManager::Get().RequestGameplayTag("Actions.Sprint");
-static FGameplayTag reloadTag = UGameplayTagsManager::Get().RequestGameplayTag("Actions.Reload");
-static FGameplayTag blockTag = UGameplayTagsManager::Get().RequestGameplayTag("Actions.Block");
-static FGameplayTag swapWeaponsTag = UGameplayTagsManager::Get().RequestGameplayTag("Actions.SwapWeapons");
 
 
 void AMinikillCharacter::Move(const FInputActionValue& Value)
