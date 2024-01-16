@@ -45,6 +45,8 @@ protected:
 	UFUNCTION()
 	void OnPawnHeard(APawn* Pawn, const FVector& Location, float Volume);
 
+	virtual void PossessedBy(AController* NewController) override;
+
 public:
 
 	virtual void PostInitializeComponents() override;
