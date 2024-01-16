@@ -24,14 +24,7 @@ ASAICharacter::ASAICharacter()
 void ASAICharacter::BeginPlay()
 {
 	Super::BeginPlay();
-
-	AAIController* AIC = Cast<AAIController>(GetController());
-	if (AIC)
-	{
-		UBlackboardComponent* bbc = AIC->GetBlackboardComponent();
-		bbc->SetValueAsFloat("Range", Range);
-	}
-
+	
 	const FTransform handSocket = GetMesh()->GetSocketTransform(TEXT("Hand_rSocket"));
 
 	// Spawn Revolver
@@ -80,6 +73,21 @@ void ASAICharacter::OnPawnHeard(APawn* Pawn, const FVector& Location, float Volu
 	{
 		UBlackboardComponent* bbc = AIC->GetBlackboardComponent();
 		bbc->SetValueAsObject("TargetActor", Pawn);
+	}
+}
+
+void ASAICharacter::PossessedBy(AController* NewController)
+{
+	Super::PossessedBy(NewController);
+
+	AAIController* AIC = Cast<AAIController>(NewController);
+	if (AIC)
+	{
+		UBlackboardComponent* bbc = AIC->GetBlackboardComponent();
+		if(bbc)
+		{
+			bbc->SetValueAsFloat("Range", Range);
+		}
 	}
 }
 
